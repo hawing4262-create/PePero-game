@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta property="og:type" content="website">
+<meta property="og:title" content="영진이의 사랑을 담은 빼빼로 고르기 게임">
+<meta property="og:description" content="상자를 골라보세요. 6가지 Bad ending과 하나의 True ending이 숨어있어요 💝">
+<meta name="theme-color" content="#FFFDF4">
+<title>영진이의 사랑을 담은 빼빼로 고르기 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFDF4;--ink:#3d3b37;--ink-soft:#6b6862;--line:#d9e7f4;--margin:#f3a5a5;
+  --red:#d9443f;--card:#fffefa;--btn:#fbeaf0;--btn-ink:#72243e;--dis:#ece8de;--dis-ink:#a19d93;
+  --tape:rgba(250,199,117,.8);--tape-ink:#633806;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#24211c;--ink:#efe9dc;--ink-soft:#bdb6a8;--line:#333e4a;--margin:#6e3434;
+    --red:#ff7b74;--card:#2c2924;--btn:#5a2a3b;--btn-ink:#ffe3ec;--dis:#37342e;--dis-ink:#8d887c;
+    --tape:rgba(250,199,117,.85);--tape-ink:#4a2a05;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#24211c;--ink:#efe9dc;--ink-soft:#bdb6a8;--line:#333e4a;--margin:#6e3434;
+  --red:#ff7b74;--card:#2c2924;--btn:#5a2a3b;--btn-ink:#ffe3ec;--dis:#37342e;--dis-ink:#8d887c;
+  --tape:rgba(250,199,117,.85);--tape-ink:#4a2a05;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{
+  position:relative;overflow:hidden;color:var(--ink);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(90deg,transparent 18px,var(--margin) 18px,var(--margin) 19.5px,transparent 19.5px),
+    repeating-linear-gradient(transparent 0 27px,var(--line) 27px 28px);
+  font-family:'Gaegu',"Apple SD Gothic Neo",sans-serif;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-appearance:none;appearance:none}
+#app{position:relative;height:100%;max-width:520px;margin:0 auto}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none !important}
+.hand{border:2px solid var(--ink);border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.pen{font-family:'Nanum Pen Script',cursive}
+
+.top{position:relative;padding:12px 16px 2px 30px;text-align:center}
+.top .sub{font-family:'Nanum Pen Script';font-size:19px;color:var(--ink-soft);line-height:1}
+.top h1{font-family:'Nanum Pen Script';font-weight:400;font-size:33px;margin:2px 0 0;line-height:1.05}
+.top h1 u{text-decoration:none;background:linear-gradient(transparent 62%,rgba(237,147,177,.55) 62%)}
+.docbtn{position:absolute;right:8px;top:6px;border:none;background:var(--tape);color:var(--tape-ink);
+  font-family:'Nanum Pen Script';font-size:20px;padding:2px 10px;transform:rotate(4deg)}
+.scene{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.scene svg{width:100%;height:100%;max-height:100%;touch-action:manipulation}
+.panel{min-height:82px;padding:4px 26px 0 34px;text-align:center}
+.pname{font-family:'Nanum Pen Script';font-size:28px;line-height:1.1}
+.pintro{font-size:17px;line-height:1.35;color:var(--ink-soft);margin-top:2px}
+.bigbtn{display:block;margin:6px auto 12px;width:min(68%,280px);padding:4px 0 2px;
+  font-family:'Nanum Pen Script';font-size:30px;background:var(--btn);color:var(--btn-ink)}
+.bigbtn:disabled{background:var(--dis);color:var(--dis-ink);border-color:var(--dis-ink)}
+.bigbtn:not(:disabled):active{transform:scale(.97)}
+.smallbtn{display:block;margin:0 auto 14px;border:none;background:none;font-family:'Nanum Pen Script';font-size:22px;color:var(--ink-soft);text-decoration:underline}
+
+svg .o{fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+svg .thin{stroke-width:1}
+svg .o2{stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
+svg .lbl{font-family:'Nanum Pen Script',cursive;text-anchor:middle}
+svg .inkt{font-family:'Nanum Pen Script',cursive;fill:var(--ink)}
+svg .box{cursor:pointer}
+svg .inner{transform-box:fill-box;transform-origin:50% 100%}
+svg .loop{fill:none;stroke:var(--red);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:700;stroke-dashoffset:700;opacity:0}
+svg .box.sel .loop{opacity:1;animation:draw .55s ease-out forwards}
+svg .box.sel .inner{animation:bounce .5s ease-out}
+svg .stampbad{opacity:0;transition:opacity .3s}
+svg .box.seen .stampbad{opacity:1}
+#plain{transition:transform 1.1s cubic-bezier(.45,-0.25,.3,1.35)}
+#plain .glow,#plain .bubble,#plain .prays{opacity:0;transition:opacity .6s}
+#plain.s6 .glow{animation:glow 1.6s ease-in-out infinite}
+#plain.s6 .bubble,#plain.s6 .prays{opacity:1}
+#plain .art{transform-box:fill-box;transform-origin:50% 100%}
+#plain.s3 .art,#plain.s4 .art,#plain.s5 .art{animation:wiggle 3.2s ease-in-out infinite}
+#plain.s6 .art{animation:bob 1.3s ease-in-out infinite}
+#plain.tick .inner{animation:tick .4s linear}
+svg .floattxt{font-family:'Nanum Pen Script';fill:var(--red);font-size:20px;animation:floatup .9s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes bounce{0%{transform:translateY(0)}35%{transform:translateY(-10px) scale(1.03)}65%{transform:translateY(0) scale(.98)}100%{transform:translateY(0)}}
+@keyframes glow{0%,100%{opacity:.25}50%{opacity:.7}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes wiggle{0%,82%,100%{transform:rotate(0)}86%{transform:rotate(-5deg)}90%{transform:rotate(4deg)}94%{transform:rotate(-2deg)}}
+@keyframes tick{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes floatup{0%{opacity:0;transform:translateY(4px)}20%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+
+.modal{position:absolute;inset:0;background:rgba(30,25,20,.45);display:flex;align-items:center;justify-content:center;z-index:20;padding:24px}
+.mcard{background:var(--card);padding:26px 18px 22px;width:min(100%,340px);text-align:center;animation:popin .3s ease-out}
+.mtext{font-family:'Nanum Pen Script';font-size:28px;line-height:1.2;margin-bottom:18px;word-break:keep-all}
+.mbtns{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.mbtn{font-family:'Nanum Pen Script';font-size:24px;padding:2px 18px;background:var(--card);transition:font-size .35s,padding .35s}
+.mbtn.yes{background:var(--btn);color:var(--btn-ink)}
+@keyframes popin{0%{transform:scale(.8) rotate(-2deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+
+#ending .endwrap{flex:1;min-height:0;overflow-y:auto;padding:4px 20px 10px 30px;text-align:center;-webkit-overflow-scrolling:touch}
+.stamp{display:inline-block;margin-top:10px;font-family:'Nanum Pen Script';font-size:34px;color:var(--red);border:3px solid var(--red);padding:0 14px;transform:rotate(-6deg)}
+.stamp.go{animation:stampin .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes stampin{0%{transform:scale(2.6) rotate(-6deg);opacity:0}100%{transform:scale(1) rotate(-6deg);opacity:1}}
+.newtag{font-family:'Nanum Pen Script';font-size:20px;color:var(--btn-ink);background:var(--btn);display:inline-block;padding:0 10px;margin:8px 0 0;transform:rotate(2deg)}
+#endName{font-family:'Nanum Pen Script';font-weight:400;font-size:34px;margin:6px 0 8px}
+.scenecard{background:var(--card);padding:16px 8px 12px;margin:0 auto 14px;max-width:360px}
+.emojis{font-size:40px;line-height:1.2;min-height:52px;display:flex;justify-content:center;flex-wrap:wrap;gap:4px}
+.emo{display:inline-block;opacity:0;animation:pop .45s var(--d) forwards,float 2.6s calc(var(--d) + .5s) ease-in-out infinite}
+.emo.yellow{filter:sepia(1) saturate(6) hue-rotate(8deg) brightness(1.12)}
+@keyframes pop{0%{opacity:0;transform:scale(.2) translateY(12px)}70%{opacity:1;transform:scale(1.2)}100%{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-4px);opacity:1}}
+.caption{display:inline-block;margin-top:8px;font-family:'Nanum Pen Script';font-size:21px;color:var(--ink-soft);border-bottom:2px dashed var(--ink-soft)}
+.story{font-size:20px;line-height:1.55;font-weight:700;word-break:keep-all;max-width:360px;margin:0 auto}
+.story .ln{display:block;opacity:0;animation:fadeup .55s var(--d) forwards}
+.story.all .ln{animation-delay:0s !important}
+.story .badline{display:block;margin-top:10px;font-family:'Nanum Pen Script';font-weight:400;font-size:26px;color:var(--red)}
+@keyframes fadeup{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+.tapskip{font-size:14px;color:var(--ink-soft);margin-top:10px}
+.endbtns{opacity:0;pointer-events:none;transition:opacity .5s;padding-top:6px}
+.endbtns.show{opacity:1;pointer-events:auto}
+
+#doc .docgrid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 16px 20px 30px;align-content:start}
+.dcard{background:var(--card);padding:12px 6px 10px;text-align:center;min-height:128px}
+.dcard .num{font-family:'Nanum Pen Script';font-size:18px;color:var(--ink-soft)}
+.dcard .de{font-size:36px;line-height:1.2;margin:2px 0}
+.dcard .dn{font-family:'Nanum Pen Script';font-size:22px;line-height:1.1;word-break:keep-all}
+.dcard .dt{font-family:'Nanum Pen Script';font-size:17px;color:var(--red);margin-top:2px}
+.dcard.lock{opacity:.55}
+.dcard.lock .dn,.dcard.lock .de{color:var(--ink-soft)}
+.dcard.true{grid-column:1 / -1;border-color:#d39a2c}
+.dcard.true .dt{color:#c4851a}
+
+#ssr{background:#1b1530;overflow:hidden;z-index:10}
+.rays{position:absolute;left:50%;top:44%;width:180vmax;height:180vmax;margin:-90vmax 0 0 -90vmax;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,rgba(255,214,120,.32) 0deg 7deg,rgba(255,214,120,0) 7deg 20deg);
+  -webkit-mask-image:radial-gradient(circle,#000 8%,transparent 55%);mask-image:radial-gradient(circle,#000 8%,transparent 55%);
+  opacity:0;transition:opacity 1s;animation:spin 18s linear infinite}
+.rays.on{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sparkles{position:absolute;inset:0;pointer-events:none}
+.spk{position:absolute;color:#ffe9a8;font-size:16px;opacity:0;animation:twinkle 2.2s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1.1)}}
+.openstage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.openstage svg{width:150px;height:auto;overflow:visible}
+.openstage .jit{animation:jit .09s linear infinite}
+@keyframes jit{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-1deg)}50%{transform:translate(2px,-1px) rotate(1deg)}75%{transform:translate(-1px,-1px)}100%{transform:translate(0,0)}}
+#lid{transform-box:fill-box;transform-origin:50% 100%;transition:transform .7s cubic-bezier(.3,1.4,.5,1),opacity .7s}
+#lid.pop{transform:translate(0,-70px) rotate(-28deg);opacity:0}
+.beam{position:absolute;left:50%;bottom:50%;width:90px;margin-left:-45px;height:0;
+  background:linear-gradient(to top,rgba(255,244,200,.95),rgba(255,230,150,0));transition:height .7s ease-out;border-radius:50% 50% 0 0}
+.beam.on{height:75vh}
+.opentxt{font-family:'Nanum Pen Script';color:#ffe9a8;font-size:26px;margin-top:18px}
+.flash{position:absolute;inset:0;background:#fffbe8;opacity:0;pointer-events:none;transition:opacity .25s}
+.flash.on{opacity:1}
+.ssrwrap{position:absolute;inset:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:22px 18px 18px;-webkit-overflow-scrolling:touch}
+.ssrcard{position:relative;overflow:hidden;width:min(100%,360px);background:#fffdf4;color:#3d3b37;text-align:center;
+  padding:16px 18px 18px;border:4px double #e3a53a;border-radius:18px;opacity:0;
+  box-shadow:0 0 0 2px rgba(255,214,120,.5),0 0 40px rgba(255,200,90,.55)}
+.ssrwrap.show .ssrcard{animation:flipin 1.1s cubic-bezier(.2,1.3,.4,1) forwards,cardglow 2.4s 1.1s ease-in-out infinite}
+@keyframes flipin{0%{transform:perspective(900px) rotateY(95deg) scale(.5);opacity:0}50%{opacity:1}100%{transform:perspective(900px) rotateY(0) scale(1);opacity:1}}
+@keyframes cardglow{0%,100%{box-shadow:0 0 0 2px rgba(255,214,120,.5),0 0 30px rgba(255,200,90,.45)}50%{box-shadow:0 0 0 3px rgba(255,214,120,.8),0 0 60px rgba(255,200,90,.8)}}
+.ssrcard::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(110deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.7) 48%,rgba(255,255,255,0) 60%);
+  transform:translateX(-130%);animation:sheen 3.2s 1.4s ease-in-out infinite}
+@keyframes sheen{0%{transform:translateX(-130%)}60%,100%{transform:translateX(130%)}}
+.ssrbadge{display:flex;justify-content:center;align-items:center;gap:8px}
+.ssrbadge b{font-family:'Nanum Pen Script';font-weight:400;font-size:30px;color:#fff;background:#d9922b;padding:0 12px;border-radius:10px;transform:rotate(-4deg);display:inline-block}
+.ssrbadge span{color:#e3a53a;font-size:20px;letter-spacing:1px}
+.ssrcard svg{width:110px;height:auto;margin:6px auto 0;display:block}
+.ssrtitle{font-family:'Nanum Pen Script';font-size:33px;line-height:1.1;margin:4px 0 10px;word-break:keep-all}
+.ssrdesc p{margin:0 0 8px;font-size:18px;line-height:1.5;font-weight:700;word-break:keep-all;opacity:0}
+.ssrwrap.show .ssrdesc p{animation:fadeup .6s var(--d) forwards}
+.ssrdesc p.final{font-family:'Nanum Pen Script';font-weight:400;font-size:27px;color:#c2412f}
+.truetag{font-family:'Nanum Pen Script';font-size:22px;color:#c4851a;margin-top:2px}
+.ssrbtns{opacity:0;pointer-events:none;transition:opacity .6s;margin-top:16px;width:min(100%,360px)}
+.ssrbtns.show{opacity:1;pointer-events:auto}
+.ssrbtns .bigbtn{background:#fbeaf0;color:#72243e;border-color:#fffdf4;width:80%}
+.ssrbtns .smallbtn{color:#ffe9a8}
+.shake{animation:shk .45s linear 2}
+@keyframes shk{0%,100%{transform:translate(0,0)}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,-2px)}80%{transform:translate(4px,4px)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}.rays{animation:none}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section id="shelf" class="screen">
+    <header class="top">
+      <div class="sub">영진이의 사랑을 담은</div>
+      <h1><u>빼빼로 고르기 게임</u> ♡</h1>
+      <button class="docbtn" data-go="doc">📖 도감 <span class="doccount">0/7</span></button>
+    </header>
+    <div class="scene"><svg id="sceneSvg" viewBox="0 0 360 440" preserveAspectRatio="xMidYMid meet" aria-label="빼빼로 진열대"></svg></div>
+    <div class="panel">
+      <div class="pname" id="pname">영진이의 진심과 사랑이 담긴</div>
+      <div class="pintro" id="pintro">빼빼로를 골라주세요. 상자를 누르면 설명이 나와요.</div>
+    </div>
+    <button id="pickBtn" class="bigbtn hand" disabled>고르기</button>
+  </section>
+
+  <section id="ending" class="screen hidden">
+    <header class="top" style="padding-bottom:0">
+      <div class="sub" id="endSub">영진이의 사랑을 담은 빼빼로 고르기 게임</div>
+      <button class="docbtn" data-go="doc">📖 도감 <span class="doccount">0/7</span></button>
+    </header>
+    <div class="endwrap" id="endWrap">
+      <div class="stamp" id="stamp">BAD ENDING</div><br>
+      <div class="newtag" id="newtag">NEW! 도감에 기록됐어요</div>
+      <h2 id="endName"></h2>
+      <div class="scenecard hand">
+        <div class="emojis" id="endEmojis"></div>
+        <div class="caption" id="endCaption"></div>
+      </div>
+      <div class="story" id="endStory"></div>
+      <div class="tapskip" id="tapskip">화면을 누르면 바로 넘어가요</div>
+      <div class="endbtns" id="endBtns">
+        <button class="bigbtn hand" id="endBack">돌아가기</button>
+        <button class="smallbtn" data-go="doc" id="endDoc">📖 도감 보기</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="doc" class="screen hidden">
+    <header class="top">
+      <div class="sub">지금까지 본 엔딩들</div>
+      <h1>엔딩 도감 <span class="doccount">0/7</span></h1>
+      <button class="docbtn" id="docBack">진열대로</button>
+    </header>
+    <div class="docgrid" id="docGrid"></div>
+  </section>
+
+  <section id="ssr" class="screen hidden">
+    <div class="rays" id="rays"></div>
+    <div class="sparkles" id="sparkles"></div>
+    <div class="openstage" id="openstage">
+      <div class="beam" id="beam"></div>
+      <svg viewBox="0 0 120 150" id="openBox">
+        <g id="openBody">
+          <rect x="22" y="48" width="80" height="94" fill="#F1EFE8" transform="rotate(1 62 95)"/>
+          <path d="M19 45 Q60 42 100 46 Q102 95 99 142 Q60 144 20 142 Q17 95 19 45Z" fill="none" stroke="#efe9dc" stroke-width="2.2"/>
+          <path d="M72 62 L72.6 106" stroke="#C9A27E" stroke-width="7" stroke-linecap="round"/>
+          <path d="M72 62 L72.3 84" stroke="#6B3E26" stroke-width="7" stroke-linecap="round"/>
+          <text x="54" y="130" text-anchor="middle" font-family="Nanum Pen Script" font-size="24" fill="#888780">빼빼로</text>
+        </g>
+        <g id="lid">
+          <path d="M13 30 Q60 26 107 31 L106 47 Q60 49 14 47 Z" fill="#E4DFD2" stroke="#efe9dc" stroke-width="2.2" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="opentxt" id="opentxt">...상자가 떨리기 시작한다</div>
+    </div>
+    <div class="flash" id="flash"></div>
+    <div class="ssrwrap" id="ssrwrap">
+      <div class="ssrcard">
+        <div class="ssrbadge"><b>SSR</b><span>★★★★★★</span></div>
+        <svg viewBox="0 0 120 130" aria-hidden="true">
+          <ellipse cx="60" cy="70" rx="56" ry="52" fill="#FAC775" opacity=".45"/>
+          <rect x="24" y="30" width="72" height="88" fill="#F1EFE8" transform="rotate(2 60 74)"/>
+          <path d="M21 27 Q60 24 98 28 Q100 74 97 118 Q60 120 22 118 Q19 74 21 27Z" fill="none" stroke="#3d3b37" stroke-width="2"/>
+          <path d="M60 8 L60.5 60" stroke="#C9A27E" stroke-width="8" stroke-linecap="round"/>
+          <path d="M60 8 L60.3 34" stroke="#6B3E26" stroke-width="8" stroke-linecap="round"/>
+          <path d="M47 96 c-9 -7 -9 -14 -3 -15 c3 0 4 2 4 4 c0 -2 1 -4 4 -4 c6 1 6 8 -5 15z" fill="#E24B4A"/>
+          <path d="M14 18 l2 -6 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2z" fill="#EF9F27"/>
+          <path d="M104 44 l2 -5 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2z" fill="#EF9F27"/>
+        </svg>
+        <div class="ssrtitle">영진이의 참된 사랑이 담긴<br>편의점 빼빼로</div>
+        <div class="ssrdesc">
+          <p style="--d:1.3s">영진이가 심사숙고해 고른 빼빼로.</p>
+          <p style="--d:2.6s">빼빼로 게임을 영원히 할 일도, 초롱이 셋트를 못 살 일도, 오디세우스가 될 일도, 우사기에게 도둑맞을 일도, 비위가 상할 일도 없으며 충분히 맛있는 참된 빼빼로.</p>
+          <p class="final" style="--d:4.4s">영진이의 사랑이 충만하게 느껴진다.</p>
+        </div>
+        <div class="truetag">✦ TRUE ENDING ✦</div>
+      </div>
+      <div class="ssrbtns" id="ssrBtns">
+        <button class="bigbtn hand" id="restartBtn">처음부터 다시하기</button>
+        <button class="smallbtn" id="ssrDocBtn">📖 도감 보기</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal hidden" id="modal">
+    <div class="mcard hand">
+      <div class="mtext" id="mtext"></div>
+      <div class="mbtns">
+        <button class="mbtn yes hand" id="mYes">예</button>
+        <button class="mbtn no hand" id="mNo">아니오</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+var ITEMS=[
+  {id:'long',name:'짱 긴 빼빼로',intro:'끝이 어디인지 아무도 모른다는 전설의 빼빼로. 빼빼로 게임용으로 딱이다!',
+   emoji:['😙','🍫','📏','📏','📏','😙'],caption:'빼빼로 게임 D+1095',
+   story:['짱 긴 빼빼로로 빼빼로 게임을 시작한 영진이와 지윤이!','확실히 빼빼로가 길긴 하네.. 어.. 어?','빼빼로가 왜 끝나지 않지?','... 그렇게 둘은 3년째 빼빼로 게임을 하고 있습니다.']},
+  {id:'gold',name:'황금 빼빼로',intro:'순금으로 만든 번쩍번쩍 빼빼로. 먹을 수는 없지만 아무튼 비싸다.',
+   emoji:['🪙','🪙','🍫','✨','💍','❌'],caption:'초롱이 셋트 제작 불가',
+   story:['영진이는 황금을 긁어모아 큰 빼빼로를 만들었지만,','초롱이 셋트를 만들 황금을 남기지 못해','프로포즈를 영영 할 수 없게 되었습니다.','아 좀 남길걸..']},
+  {id:'billion',name:'10억짜리 빼빼로',intro:'가격표의 0을 세다가 포기했다. 무려 10억 원짜리 빼빼로!',
+   emoji:['💸','🚢','🌊','🏝️','👁️'],caption:'귀환까지 약 10년',
+   story:['10억짜리 빼빼로를 사기 위해 돈을 벌러 떠난 영진이는','원양어선을 전전하던 중 키클롭스의 섬에 떨어졌습니다.','돌아오려면 10년은 걸릴 듯 합니다...']},
+  {id:'curry',name:'매운 카레 빼빼로',intro:'한 입 먹으면 입에서 불이 나는 화끈한 카레맛 빼빼로.',
+   emoji:['🌿','🐰','🍫','💨','🍛','🥵'],caption:'후루우우이얏하아!!',
+   story:['후루우우이얏하아!!','어디선가 덩굴을 타고 나타난 우사기가 빼빼로를 훔쳐 도망갔습니다.','빨개진 얼굴로 만족스럽게 빼빼로를 먹으며...']},
+  {id:'gongjin',name:'공진단 빼빼로',intro:'몸에 좋은 건 다 넣었다. 영진이가 엄선한 보약 빼빼로.',
+   emoji:['💊','🍫','😵‍💫','🤢','👅','❌'],caption:'미각 -100',
+   story:['차마 영진이가 몸에 좋다고 준 빼빼로를 안 먹을 수 없던 당신은','공진단 빼빼로를 먹던 중 비위가 상해 미각을 잃어버렸습니다.','우웩.']},
+  {id:'tasty',name:'짱 맛있는 빼빼로',intro:'별점 5.0! 한 번 먹으면 절대 잊을 수 없는 맛.',
+   emoji:['😋','🍫','👀','🫥','🎒','🌄'],caption:'기약 없는 여정 시작',
+   story:['세상에서 제일 맛있는 빼빼로를 받은 당신!','금세 하나를 다 먹고 영진이를 쳐다봤지만 빼빼로는 이제 없습니다.','당신은 영진이를 두고 짱 맛있는 빼빼로를 얻기 위한','기약없는 여정에 떠납니다...']}
+];
+var PLAIN={name:'평범한 빼빼로',intro:'그냥 편의점에서 파는 평범한 빼빼로입니다.'};
+var BYID={};ITEMS.forEach(function(it){BYID[it.id]=it});
+var BOX={long:[20,40,44,167],gold:[76,126,72,81],billion:[158,94,84,113],gongjin:[254,130,84,77],curry:[20,262,86,85],tasty:[116,266,88,81]};
+var STG=[[276,283],[300,283],[275,238],[290,370],[222,370],[154,370],[154,370]];
+var KEY='yj-pepero-game-v1';
+var state={seen:[],trueDone:false};
+try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&Array.isArray(p.seen)){state.seen=p.seen.filter(function(x){return BYID[x]});state.trueDone=!!p.trueDone;}}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function stage(){return Math.min(state.seen.length,6)}
+
+var $=function(id){return document.getElementById(id)};
+var app=$('app'),svg=$('sceneSvg');
+var selected=null,pendingFrom=null,endMode='shelf';
+
+function wob(x,y,w,h){var j=1.6;return 'M'+x+' '+y+' Q'+(x+w/2)+' '+(y-j)+' '+(x+w)+' '+(y+j*.6)+' Q'+(x+w+j*.7)+' '+(y+h/2)+' '+(x+w-j*.6)+' '+(y+h)+' Q'+(x+w/2)+' '+(y+h+j*.6)+' '+(x+j*.6)+' '+(y+h)+' Q'+(x-j)+' '+(y+h/2)+' '+x+' '+y+'Z'}
+function loop(x,y,w,h){var X=x-8,Y=y-8,W=w+16,H=h+16;return 'M'+(X+W*.15)+' '+(Y+H*.1)+' Q'+(X-5)+' '+(Y+H*.45)+' '+(X+W*.2)+' '+(Y+H)+' Q'+(X+W*.55)+' '+(Y+H+8)+' '+(X+W+3)+' '+(Y+H*.8)+' Q'+(X+W+9)+' '+(Y+H*.3)+' '+(X+W*.7)+' '+(Y-3)+' Q'+(X+W*.3)+' '+(Y-10)+' '+(X+W*.04)+' '+(Y+H*.26)}
+function star(x,y,s,fill){return '<path class="o2" stroke-width="1" fill="'+fill+'" d="M'+x+' '+(y-s)+' L'+(x+s*.3)+' '+(y-s*.3)+' L'+(x+s)+' '+y+' L'+(x+s*.3)+' '+(y+s*.3)+' L'+x+' '+(y+s)+' L'+(x-s*.3)+' '+(y+s*.3)+' L'+(x-s)+' '+y+' L'+(x-s*.3)+' '+(y-s*.3)+'Z"/>'}
+function stamp(id){var b=BOX[id];var sx=b[0]+b[2]-16,sy=b[1]+(id==='long'?24:10);return '<g class="stampbad" transform="translate('+sx+' '+sy+') rotate(-14)"><rect x="-20" y="-10" width="40" height="20" rx="3" fill="#FFFDF4" stroke="#D9443F" stroke-width="2"/><text x="0" y="6" text-anchor="middle" font-family="Nanum Pen Script" font-size="18" fill="#D9443F">BAD</text></g>'}
+
+var ART={
+ long:'<rect x="23" y="43" width="42" height="164" fill="#B5D4F4" transform="rotate(1 44 125)"/>'+
+  '<path class="o" d="'+wob(20,40,44,167)+'"/>'+
+  '<path d="M42 50 L42.6 104" stroke="#C9A27E" stroke-width="7" stroke-linecap="round"/><path d="M42 50 L42.3 78" stroke="#6B3E26" stroke-width="7" stroke-linecap="round"/>'+
+  '<text class="lbl" x="42" y="146" font-size="36" fill="#0C447C">짱</text><text class="lbl" x="42" y="184" font-size="36" fill="#0C447C">긴</text>'+
+  '<path class="o" d="M42 33 L42 9 M35 16 L42 7 L49 16"/><text class="inkt" x="54" y="26" font-size="19" transform="rotate(-6 54 26)">끝이 안 보임</text>',
+ gold:'<rect x="79" y="129" width="70" height="78" fill="#FAC775" transform="rotate(2 113 167)"/>'+
+  '<path class="o" d="'+wob(76,126,72,81)+'"/>'+
+  '<text class="lbl" x="112" y="166" font-size="36" fill="#854F0B">황금</text>'+
+  '<path class="o2" fill="#EF9F27" d="M96 197 L100 182 L124 182 L128 197 Z"/><path d="M103 186 L110 186" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>'+
+  star(80,120,6,'#FAC775')+star(152,134,5,'#FAC775')+star(140,118,4,'#FAC775'),
+ billion:'<path d="M158 94 Q200 91 242 95 L241 207 L159 207 Z" fill="#E6F1FB" fill-opacity=".35" stroke="#85B7EB" stroke-width="1.6" stroke-dasharray="5 4"/>'+
+  '<rect x="169" y="125" width="66" height="82" fill="#CECBF6" transform="rotate(-2 200 166)"/>'+
+  '<path class="o" d="'+wob(166,122,68,85)+'"/>'+
+  '<path d="M200 130 L211 142 L200 157 L189 142 Z" fill="#FFFFFF" stroke="#534AB7" stroke-width="1.6" stroke-linejoin="round"/>'+
+  '<text class="lbl" x="200" y="192" font-size="36" fill="#3C3489">10억</text>'+
+  '<path d="M165 101 L176 115 M172 100 L179 109" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>'+
+  '<path class="o thin" d="M200 213 L200 220"/><path class="o2" fill="#FFFFFF" d="M156 220 Q200 216 246 220 L245 239 Q200 241 157 239 Z"/>'+
+  '<text class="lbl" x="201" y="235" font-size="18" fill="#A32D2D">₩1,000,000,000</text>',
+ gongjin:'<rect x="257" y="133" width="82" height="74" fill="#F09595" transform="rotate(-2 296 170)"/>'+
+  '<path class="o" d="'+wob(254,130,84,77)+'"/>'+
+  '<circle cx="296" cy="156" r="14" fill="#FAC775" class="o2"/><circle cx="296" cy="156" r="9" fill="none" stroke="#EF9F27" stroke-width="1.6"/><circle cx="291" cy="151" r="3.5" fill="#FFFFFF"/>'+
+  '<text class="lbl" x="296" y="197" font-size="30" fill="#791F1F">공진단</text>',
+ curry:'<rect x="23" y="265" width="84" height="82" fill="#F0997B" transform="rotate(2 63 305)"/>'+
+  '<path class="o" d="'+wob(20,262,86,85)+'"/>'+
+  '<g transform="translate(63 313) scale(1.6) translate(-39 -254)"><path d="M39 254 c-9 0 -12 -8 -7 -15 c1 4 3 5 4 4 c-1 -6 2 -11 6 -14 c0 5 6 8 6 15 c0 6 -4 10 -9 10z" fill="#FAC775" stroke="#A32D2D" stroke-width="1"/><path d="M39 254 c-4 0 -6 -4 -3 -8 c1 2 2 2 3 1 c0 -3 1 -5 3 -6 c0 3 3 5 3 8 c0 3 -2 5 -6 5z" fill="#E24B4A"/></g>'+
+  '<text class="lbl" x="63" y="337" font-size="27" fill="#712B13">매운 카레</text>',
+ tasty:'<rect x="119" y="269" width="86" height="78" fill="#F4C0D1" transform="rotate(-2 160 307)"/>'+
+  '<path class="o" d="'+wob(116,266,88,81)+'"/>'+
+  '<text x="160" y="286" text-anchor="middle" font-size="14" fill="#BA7517">★★★★★</text>'+
+  '<circle cx="148" cy="298" r="2.6" fill="#2C2C2A"/><circle cx="172" cy="298" r="2.6" fill="#2C2C2A"/>'+
+  '<path d="M145 305 Q160 316 175 305" fill="none" stroke="#2C2C2A" stroke-width="2" stroke-linecap="round"/><path d="M171 310 q2 6 0 10" fill="none" stroke="#378ADD" stroke-width="2.2" stroke-linecap="round"/>'+
+  '<text class="lbl" x="160" y="338" font-size="27" fill="#72243E">짱 맛있는</text>'
+};
+
+function buildScene(){
+  var h='';
+  h+='<path class="o" d="M10 207 Q180 202 350 208"/><path class="o thin" d="M14 212 Q180 209 346 213"/>';
+  h+='<path class="o" d="M10 347 Q180 343 350 348"/><path class="o thin" d="M14 352 Q180 349 346 353"/>';
+  h+='<path class="o thin" d="M20 433 Q180 429 340 434" opacity=".45"/>';
+  ['long','gold','billion','gongjin','curry','tasty'].forEach(function(id){
+    var b=BOX[id];
+    h+='<g class="box" data-id="'+id+'"><g class="inner">'+ART[id]+stamp(id)+
+      '<path class="loop" d="'+loop(b[0],b[1],b[2],b[3])+'"/>'+
+      '<rect x="'+(b[0]-6)+'" y="'+(b[1]-6)+'" width="'+(b[2]+12)+'" height="'+(b[3]+12)+'" fill="#000" fill-opacity="0" pointer-events="all"/></g></g>';
+  });
+  h+='<g id="plain" class="box" data-id="plain"><g class="inner">'+
+    '<ellipse class="glow" cx="26" cy="34" rx="50" ry="46" fill="#FAC775"/>'+
+    '<g class="prays">'+star(-14,4,6,'#FAC775')+star(64,46,5,'#FAC775')+star(-10,52,4,'#FAC775')+'</g>'+
+    '<g class="art"><rect x="3" y="3" width="50" height="59" fill="#F1EFE8" transform="rotate(1 28 32)"/>'+
+    '<path d="'+wob(0,0,52,62)+'" fill="none" stroke="#888780" stroke-width="1.6"/>'+
+    '<path d="M34 9 L34.5 34" stroke="#C9A27E" stroke-width="5" stroke-linecap="round"/><path d="M34 9 L34.3 20" stroke="#6B3E26" stroke-width="5" stroke-linecap="round"/>'+
+    '<text class="lbl" x="24" y="53" font-size="18" fill="#888780">빼빼로</text></g>'+
+    '<g class="bubble"><path d="M64 -4 Q128 -9 190 -3 Q193 12 189 27 Q128 31 66 27 L56 36 L61 25 Q59 10 64 -4Z" fill="#FFFFFF" class="o2"/><text class="lbl" x="127" y="18" font-size="20" fill="#2C2C2A">저... 여기 있어요</text></g>'+
+    '<path class="loop" d="'+loop(0,0,52,62)+'"/>'+
+    '<rect x="-6" y="-6" width="64" height="74" fill="#000" fill-opacity="0" pointer-events="all"/></g></g>';
+  h+='<path d="'+wob(234,302,100,45)+'" fill="#D9C3A0" class="o2"/>'+
+    '<path class="o thin" d="M240 316 Q284 314 328 317 M240 332 Q284 330 328 333 M248 304 L248 345 M318 304 L319 345"/>'+
+    '<text class="lbl" x="284" y="331" font-size="22" fill="#5F4A2A">잡동사니</text>';
+  svg.innerHTML=h;
+}
+
+function setPlain(st,animate){
+  var g=$('plain');var p=STG[st];
+  if(!animate){g.style.transition='none';}
+  g.style.transform='translate('+p[0]+'px,'+p[1]+'px)';
+  g.setAttribute('transform','translate('+p[0]+' '+p[1]+')');
+  if(!animate){g.getBoundingClientRect();g.style.transition='';}
+  g.classList.remove('s0','s1','s2','s3','s4','s5','s6');g.classList.add('s'+st);
+}
+function refreshShelf(){
+  svg.querySelectorAll('.box').forEach(function(b){
+    var id=b.getAttribute('data-id');
+    b.classList.toggle('seen',state.seen.indexOf(id)>=0);
+    b.classList.toggle('sel',id===selected);
+  });
+}
+function refreshCounts(){
+  var n=state.seen.length+(state.trueDone?1:0);
+  document.querySelectorAll('.doccount').forEach(function(s){s.textContent=n+'/7'});
+}
+function setPanel(){
+  if(!selected){$('pname').textContent='영진이의 진심과 사랑이 담긴';$('pintro').textContent='빼빼로를 골라주세요. 상자를 누르면 설명이 나와요.';$('pickBtn').disabled=true;return;}
+  var it=selected==='plain'?PLAIN:BYID[selected];
+  $('pname').textContent=it.name;$('pintro').textContent=it.intro;$('pickBtn').disabled=false;
+}
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('hidden',s.id!==id)});}
+function shakeApp(){app.classList.remove('shake');void app.offsetWidth;app.classList.add('shake');}
+
+svg.addEventListener('click',function(e){
+  var b=e.target.closest('.box');if(!b)return;
+  var id=b.getAttribute('data-id');
+  if(id==='plain'&&stage()<6){
+    var g=$('plain');g.classList.remove('tick');void g.getBoundingClientRect();g.classList.add('tick');
+    var p=STG[stage()];var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',p[0]+4);t.setAttribute('y',p[1]-6);t.setAttribute('class','floattxt');t.textContent='틱 틱';
+    svg.appendChild(t);setTimeout(function(){t.remove();g.classList.remove('tick')},900);
+    return;
+  }
+  selected=id;
+  b.classList.remove('sel');void b.getBoundingClientRect();
+  refreshShelf();setPanel();
+});
+
+var modalYes=null,modalNo=null;
+function openModal(text,yesScale,noScale,onYes,onNo){
+  $('mtext').textContent=text;
+  $('mYes').style.fontSize=(24*yesScale)+'px';$('mYes').style.padding=(2*yesScale)+'px '+(18*yesScale)+'px';
+  $('mNo').style.fontSize=(24*noScale)+'px';$('mNo').style.padding=(2*noScale)+'px '+(18*noScale)+'px';
+  modalYes=onYes;modalNo=onNo;
+  var m=$('modal');m.classList.remove('hidden');
+  var c=m.querySelector('.mcard');c.style.animation='none';void c.offsetWidth;c.style.animation='';
+}
+function closeModal(){$('modal').classList.add('hidden');}
+$('mYes').addEventListener('click',function(){var f=modalYes;closeModal();if(f)f();});
+$('mNo').addEventListener('click',function(){var f=modalNo;closeModal();if(f)f();});
+
+function deselect(){selected=null;refreshShelf();setPanel();}
+var PLAIN_STEPS=[['정말 평범한 빼빼로를 고르시겠습니까?',1,1],['정말정말 고르시겠습니까?',1.45,.7],['후회하지 않으시겠습니까??',2,.45]];
+function plainStep(i){
+  if(i>=PLAIN_STEPS.length){startSSR(false);return;}
+  var s=PLAIN_STEPS[i];
+  openModal(s[0],s[1],s[2],function(){plainStep(i+1)},deselect);
+}
+$('pickBtn').addEventListener('click',function(){
+  if(!selected)return;
+  if(selected==='plain'){plainStep(0);return;}
+  var it=BYID[selected];
+  openModal('「'+it.name+'」를 고르시겠습니까?',1,1,function(){showEnding(it.id,'shelf')},deselect);
+});
+
+var endTimer=null;
+function showEnding(id,mode){
+  endMode=mode;var it=BYID[id];var isNew=false;
+  if(mode==='shelf'&&state.seen.indexOf(id)<0){pendingFrom=stage();state.seen.push(id);save();isNew=true;}
+  refreshCounts();
+  $('endName').textContent=it.name;
+  $('newtag').style.display=isNew?'inline-block':'none';
+  var em='';it.emoji.forEach(function(e,i){em+='<span class="emo'+(e==='🐰'?' yellow':'')+'" style="--d:'+(0.5+i*0.28).toFixed(2)+'s">'+e+'</span>';});
+  $('endEmojis').innerHTML=em;
+  $('endCaption').textContent=it.caption;
+  var base=0.6+it.emoji.length*0.28;
+  var st='';it.story.forEach(function(l,i){st+='<span class="ln" style="--d:'+(base+i*1.1).toFixed(2)+'s">'+l+'</span>';});
+  var last=base+it.story.length*1.1;
+  st+='<span class="ln badline" style="--d:'+last.toFixed(2)+'s">&lt; Bad ending &gt;</span>';
+  var story=$('endStory');story.classList.remove('all');story.innerHTML=st;
+  $('endBack').textContent=mode==='doc'?'도감으로':'돌아가기';
+  $('endDoc').style.display=mode==='doc'?'none':'block';
+  var btns=$('endBtns');btns.classList.remove('show');$('tapskip').style.display='block';
+  var sp=$('stamp');sp.classList.remove('go');void sp.offsetWidth;sp.classList.add('go');
+  $('endWrap').scrollTop=0;
+  show('ending');shakeApp();
+  clearTimeout(endTimer);endTimer=setTimeout(revealEnd,(last+0.6)*1000);
+}
+function revealEnd(){clearTimeout(endTimer);$('endStory').classList.add('all');$('endBtns').classList.add('show');$('tapskip').style.display='none';
+  document.querySelectorAll('#endEmojis .emo').forEach(function(e){e.style.setProperty('--d','0s')});}
+$('endWrap').addEventListener('click',function(e){if(e.target.closest('button'))return;revealEnd();});
+$('endBack').addEventListener('click',function(){if(endMode==='doc'){openDoc();}else{goShelf();}});
+
+function goShelf(){
+  closeModal();selected=null;show('shelf');refreshShelf();setPanel();refreshCounts();
+  if(pendingFrom!==null&&pendingFrom!==stage()){
+    var from=pendingFrom,to=stage();pendingFrom=null;
+    setPlain(from,false);
+    setTimeout(function(){setPlain(to,true);},500);
+  }else{pendingFrom=null;setPlain(stage(),false);}
+}
+
+function openDoc(){
+  refreshCounts();
+  var h='';
+  ITEMS.forEach(function(it,i){
+    var got=state.seen.indexOf(it.id)>=0;
+    if(got)h+='<button class="dcard hand" data-end="'+it.id+'"><div class="num">No.'+(i+1)+'</div><div class="de">'+(it.id==='curry'?'<span class="emo yellow" style="opacity:1;animation:none">🐰</span>':it.emoji[it.emoji.length-1])+'</div><div class="dn">'+it.name+'</div><div class="dt">Bad ending</div></button>';
+    else h+='<div class="dcard hand lock"><div class="num">No.'+(i+1)+'</div><div class="de">?</div><div class="dn">???</div><div class="dt">&nbsp;</div></div>';
+  });
+  if(state.trueDone)h+='<button class="dcard hand true" data-end="true"><div class="num">No.7</div><div class="de">💝</div><div class="dn">영진이의 참된 사랑이 담긴 편의점 빼빼로</div><div class="dt">✦ True ending ✦</div></button>';
+  else h+='<div class="dcard hand true lock"><div class="num">No.7</div><div class="de">✦</div><div class="dn">???</div><div class="dt">True ending ???</div></div>';
+  $('docGrid').innerHTML=h;
+  show('doc');
+}
+$('docGrid').addEventListener('click',function(e){
+  var c=e.target.closest('[data-end]');if(!c)return;
+  var id=c.getAttribute('data-end');
+  if(id==='true')startSSR(true);else showEnding(id,'doc');
+});
+document.querySelectorAll('[data-go="doc"]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();openDoc();});});
+$('docBack').addEventListener('click',goShelf);
+
+var ssrTimers=[];
+function clearSSR(){ssrTimers.forEach(clearTimeout);ssrTimers=[];}
+function later(ms,f){ssrTimers.push(setTimeout(f,ms));}
+function makeSparkles(){
+  var h='';for(var i=0;i<26;i++){h+='<span class="spk" style="left:'+(Math.random()*96).toFixed(1)+'%;top:'+(Math.random()*96).toFixed(1)+'%;animation-delay:'+(Math.random()*2.2).toFixed(2)+'s;font-size:'+(10+Math.random()*14).toFixed(0)+'px">✦</span>';}
+  $('sparkles').innerHTML=h;
+}
+function startSSR(fromDoc){
+  clearSSR();
+  var wrap=$('ssrwrap'),os=$('openstage'),lid=$('lid'),beam=$('beam'),body=$('openBody'),rays=$('rays'),flash=$('flash'),btns=$('ssrBtns');
+  wrap.classList.remove('show');wrap.style.display='none';btns.classList.remove('show');rays.classList.remove('on');flash.classList.remove('on');
+  lid.classList.remove('pop');beam.classList.remove('on');$('sparkles').innerHTML='';
+  $('restartBtn').style.display=fromDoc?'none':'block';
+  $('ssrDocBtn').textContent=fromDoc?'도감으로':'📖 도감 보기';
+  show('ssr');
+  if(fromDoc){
+    os.style.display='none';rays.classList.add('on');makeSparkles();wrap.style.display='flex';
+    void wrap.offsetWidth;wrap.classList.add('show');later(1400,function(){btns.classList.add('show')});return;
+  }
+  state.trueDone=true;save();refreshCounts();
+  os.style.display='flex';$('opentxt').textContent='...상자가 떨리기 시작한다';
+  document.getElementById('openBox').classList.add('jit');
+  later(300,shakeApp);
+  later(1300,function(){$('opentxt').textContent='!!!';shakeApp();});
+  later(1700,function(){lid.classList.add('pop');beam.classList.add('on');});
+  later(2400,function(){flash.classList.add('on');shakeApp();});
+  later(2750,function(){
+    document.getElementById('openBox').classList.remove('jit');os.style.display='none';
+    rays.classList.add('on');makeSparkles();wrap.style.display='flex';void wrap.offsetWidth;wrap.classList.add('show');
+    flash.classList.remove('on');
+  });
+  later(2750+5600,function(){btns.classList.add('show')});
+}
+$('ssrDocBtn').addEventListener('click',function(){clearSSR();openDoc();});
+$('restartBtn').addEventListener('click',function(){
+  clearSSR();state={seen:[],trueDone:false};save();pendingFrom=null;selected=null;goShelf();
+});
+
+buildScene();
+setPlain(stage(),false);refreshShelf();setPanel();refreshCounts();
+})();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
